@@ -7,7 +7,8 @@ feature "StaticPages" do
 	scenario "User visits the Home page" do
 		visit '/static_pages/home'
 		expect(page).to have_text('Sample App')
-		expect(page).to have_title("#{base_title} | Home")
+		expect(page).to have_title("#{base_title}")
+		expect(page).not_to have_title("| Home")
 	end
 
 	scenario "User visits the Help page" do
