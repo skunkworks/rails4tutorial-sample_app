@@ -20,13 +20,14 @@ textarea {
 
 .center {
 	text-align: center;
-}
-
-.center h1 {
-	margin-bottom: 10px;
+	h1 {
+		margin-bottom: 10px;
+	}
 }
 
 /* typography */
+
+$lightGray: #999;
 
 h1, h2, h3, h4, h5, h6 {
 	line-height: 1;
@@ -45,7 +46,7 @@ h2 {
 	margin-bottom: 30px;
 	text-align: center;
 	font-weight: normal;
-	color: #999;
+	color: $lightGray;
 }
 
 p {
@@ -65,11 +66,10 @@ p {
 	padding-top: 9px;
 	font-weight: bold;
 	line-height: 1;
-}
-
-#logo:hover {
-	color: #fff;
-	text-decoration: none;
+	&:hover {
+		color: #fff;
+		text-decoration: none;
+	}
 }
 
 /* footer */
@@ -78,27 +78,22 @@ footer {
 	margin-top: 45px;
 	padding-top: 5px;
 	border-top: 1px solid #eaeaea;
-	color: #999;
-}
-
-footer a {
-	color: #555;
-}
-
-footer a:hover {
-	color: #222;
-}
-
-footer small {
-	float: left;
-}
-
-footer ul {
-	float: right;
-	list-style: none;
-}
-
-footer ul li {
-	float: left;
-	margin-left: 10px;
+	color: $lightGray;
+	a {
+		color: #555;
+		&:hover {
+			color:#222;
+		}
+	}
+	small {
+		float: left;
+	}
+	ul {
+		float: right;
+		list-style: none;
+		li {
+			float: left;
+			margin-left: 10px;
+		}
+	}
 }
