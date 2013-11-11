@@ -4,7 +4,7 @@ describe "User pages" do
 
 	subject { page }
 
-  describe "Signup page" do
+  describe "signup page" do
   	before { visit signup_path }
 
     it { should have_text('Sign up') }
