@@ -21,13 +21,20 @@ describe "User pages" do
       it 'does not create new user' do
         expect{ click_button(submit) }.not_to change(User, :count)
       end
+
+      describe 'after submission' do
+        before { click_button(submit) }
+
+        it { should have_title('Sign up') }
+        it { should have_content("error") }
+      end
     end
 
     context 'with valid information' do
       before do
-        fill_in 'Name', with: "Example User"
-        fill_in 'Email', with: "example@example.com"
-        fill_in 'Password', with: "foobar"
+        fill_in 'Name',             with: "Example User"
+        fill_in 'Email',            with: "example@example.com"
+        fill_in 'Password',         with: "foobar"
         fill_in 'Confirm password', with: "foobar"
       end
 
