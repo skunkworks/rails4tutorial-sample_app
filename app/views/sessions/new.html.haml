@@ -1,0 +1,21 @@
+- provide(:title, 'Sign in')
+%h1 Sign in
+
+/ We can't just do form_for(@session) because there's no session model! We can do
+/ form_for(@user) because the user model exists, which allows Rails to infer that
+/ the form should be a POST to the /users URL. (Question: how does form_for know
+/ the difference between new vs. edit? I believe it checks the ID to see if it's
+/ not nil.)
+.row
+  .span6.offset3
+    = form_for :session, url: sessions_path do |f|
+      = f.label :email, 'Email'
+      = f.text_field :email
+      
+      = f.label :password, 'Password'
+      = f.password_field :password
+
+      = f.submit 'Sign in', class: 'btn btn-large btn-primary'
+
+    / If you want to inline links in HAML, must use string interpolation
+    %p New user? #{link_to 'Sign up now!', signup_path}

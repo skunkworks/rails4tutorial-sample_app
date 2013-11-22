@@ -1,6 +1,13 @@
 Rails4tutorialSampleApp::Application.routes.draw do
   resources :users
+
+  # Note the hash argument { :only => [:new, :create, :destroy] } to prevent creating
+  # unnecessary RESTful actions
+  resources :sessions, only: [:new, :create, :destroy]
+  
+  # Route to static home page
   root 'static_pages#home'
+  
   match '/help',     to: 'static_pages#help',     via: 'get'
   match '/about',    to: 'static_pages#about',    via: 'get'
   match '/contact',  to: 'static_pages#contact',  via: 'get'
@@ -9,8 +16,18 @@ Rails4tutorialSampleApp::Application.routes.draw do
   # route to users#create. The problem with having the signup form POST directly
   # to the standard users#create route (/users) is that on signup failure, we
   # re-render the 'new' template in users#create but the URL shows as being /users,
-  # since the form POSTed to this URL and the response was the rendered 'new' template
+  # since the form POSTed to this URL and the response was the rendered 'new' template.
+  #
+  # Therefore, the solution to this problem requires two steps:
+  # 1. Create a route for POSTing to /signup rather than to /users to create a new
+  #    user.
+  # 2. Make the form for the new user signup POST to /signup a.k.a. signup_path
   match '/signup',   to: 'users#create',          via: 'post'
+
+  # Some aliases for signing in/out i.e. creating/destroying sessions
+  match '/signin',   to: 'sessions#new',          via: 'get'
+  match '/signout',  to: 'sessions#destroy',      via: 'delete'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
