@@ -25,8 +25,8 @@ describe "User pages" do
       describe 'after submission' do
         before { click_button(submit) }
 
-        it { should have_title('Sign up') }
-        it { should have_content("error") }
+        it { should have_title 'Sign up' }
+        it { should have_error_message 'error' }
       end
     end
 
@@ -47,8 +47,8 @@ describe "User pages" do
         let (:user) { User.find_by_email("example@example.com") }
 
         it { should have_title(user.name) }
-        it { should have_selector('div.alert.alert-success', text: 'Welcome') }
-        it { should have_link('Sign out') }
+        it { should have_success_message 'Welcome' }
+        it { should have_link 'Sign out' }
       end
     end
   end
