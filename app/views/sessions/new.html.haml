@@ -8,14 +8,14 @@
 / not nil.)
 .row
   .span6.offset3
-    = form_for :session, url: sessions_path do |f|
-      = f.label :email, 'Email'
-      = f.text_field :email
+    = form_tag sessions_path, method: 'post' do
+      = label_tag 'session[email]', 'Email'
+      = text_field_tag 'session[email]'
+
+      = label_tag 'session[password]', 'Password'
+      = password_field_tag 'session[password]'
+
+      = submit_tag 'Sign in', class: 'btn btn-large btn-primary'
       
-      = f.label :password, 'Password'
-      = f.password_field :password
-
-      = f.submit 'Sign in', class: 'btn btn-large btn-primary'
-
     / If you want to inline links in HAML, must use string interpolation
     %p New user? #{link_to 'Sign up now!', signup_path}
