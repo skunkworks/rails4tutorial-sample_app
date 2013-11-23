@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       # sign_in method is defined in SessionsHelper and is responsible for creating
       # a permanent session for the user that does not expire
       sign_in user
-      redirect_to user
+      redirect_back_or user
     else
       # Don't do this! Flash messages persist for the next request, and rendering
       # the 'new' template like we do here counts as the *current* request, not

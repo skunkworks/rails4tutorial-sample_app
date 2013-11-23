@@ -5,7 +5,8 @@
 / form_for(@user) because the user model exists, which allows Rails to infer that
 / the form should be a POST to the /users URL. (Question: how does form_for know
 / the difference between new vs. edit? I believe it checks the ID to see if it's
-/ not nil.)
+/ not nil.) (Answer: ActiveRecord uses #new_record? to check whether the form should
+/ be a POST or a PATCH/PUT)
 .row
   .span6.offset3
     = form_tag sessions_path, method: 'post' do

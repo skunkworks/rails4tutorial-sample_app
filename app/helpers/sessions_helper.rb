@@ -61,8 +61,29 @@ module SessionsHelper
     @current_user ||= User.find_by_remember_token(remember_token)
   end
 
+  def current_user?(user)
+    current_user == user
+  end
+
   def signed_in?
     !current_user.nil?
   end
 
+  def redirect_back_or(default)
+    redirect_to(session[:return_to] || default)
+    session.delete(:return_to)
+  end
+
+  def store_location
+    # Why do we only store the URL to return to if it's a GET request?
+    # Answer: one edge case exists when the user attempts to perform an action that
+    # requires authentication that uses POST, PATCH, DELETE, e.g. they submit a form
+    # after purging their cookies. If we stored the forwarding URL for these cases,
+    # after the user re-authenticated, we would attempt to redirect them to this
+    # forwarding URL but it would be with a GET, which would lead to either an error
+    # or their reaching some unexpected page. A more sensible behavior might be to
+    # pretend the forwarding URL request never happened and provide default sign-in
+    # behavior.
+    session[:return_to] = request.url if request.get?
+  end
 end

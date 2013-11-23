@@ -1,0 +1,10 @@
+- provide(:title, 'All users')
+%h1 All users
+  
+= will_paginate
+/ Rails is smart enough to detect the class type of an object and automatically look for
+/ a partial with the same name, e.g. render user will look for a partial called _user, and
+/ a collection of users (e.g. @users) will automatically be iterated and rendered
+%ul.users
+  = render @users
+= will_paginate
