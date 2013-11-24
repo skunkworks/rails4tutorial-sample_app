@@ -2,11 +2,8 @@ require 'spec_helper'
 $count = 0
 describe User do
 
-  let (:user) { User.new(name:                  "Example User",
-                         email:                 "user@example.com",
-                         password:              "foobar",
-                         password_confirmation: "foobar") }
-
+  # FactoryGirl.build vs .create - new vs create
+  let (:user) { FactoryGirl.build(:user) }
   subject { user }
 
   it { should respond_to(:name) }
@@ -17,6 +14,8 @@ describe User do
   it { should respond_to(:authenticate) }
   it { should respond_to(:remember_token) }
   it { should respond_to(:admin) }
+  it { should respond_to(:microposts) }
+  it { should respond_to(:feed) }
 
   it { should be_valid }
   it { should_not be_admin }
@@ -128,5 +127,40 @@ describe User do
     # Rails (ActiveRecord) smart enough to create User#admin? because the database
     # has a boolean admin field.
     it { should be_admin }
+  end
+
+  describe 'microposts association' do
+    before { user.save }
+    let! (:oldest_micropost) { FactoryGirl.create(:micropost, user: user, created_at: 1.day.ago) }
+    let! (:newer_micropost)  { FactoryGirl.create(:micropost, user: user, created_at: 1.hour.ago) }
+
+    it "returns the user's microposts by creation time descending" do
+      # Note the clever to_a to allow us to compare our expected Array to the AR collection
+      expect(user.microposts.to_a).to eq([newer_micropost, oldest_micropost])
+    end
+
+    it "destroys associated microposts" do
+      microposts = user.microposts.to_a
+      user.destroy
+      # This line is from the book. It seems wacky at first because in-memory representations of AR
+      # objects are not nilled out by calling destroy on them, so it seems redundant to make sure
+      # that microposts is not empty. However, ActiveRecord lazy queries the database, so if microposts
+      # isn't evaluated until after #destroy, it will return empty. We protect against that condition
+      # by calling to_a on microposts and by testing explicitly.
+      expect(microposts).not_to be_empty
+      microposts.each do |micropost|
+        expect(Micropost.find_by_id(micropost.id)).to be_nil
+      end
+    end
+
+    describe 'status' do
+      let(:unfollowed_post) do
+        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+      end
+
+      its(:feed) { should include oldest_micropost }
+      its(:feed) { should include newer_micropost }
+      its(:feed) { should_not include unfollowed_post }
+    end
   end
 end

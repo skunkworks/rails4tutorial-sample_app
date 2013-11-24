@@ -65,6 +65,14 @@ module SessionsHelper
     current_user == user
   end
 
+  def signed_in_user
+    unless signed_in?
+      flash[:notice] = 'Please sign in'
+      store_location
+      redirect_to signin_path
+    end 
+  end
+
   def signed_in?
     !current_user.nil?
   end

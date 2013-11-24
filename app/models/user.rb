@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  has_many :microposts, dependent: :destroy
+
   before_save   { email.downcase! }
   # Before the user gets created in the DB, generate a remember token for them so that
   # they are not blank. We want this only on create, not on save (which would encompass
@@ -12,6 +14,10 @@ class User < ActiveRecord::Base
   									uniqueness: { case_sensitive: false }
   has_secure_password
   validates :password, length: { minimum: 6 }
+
+  def feed
+    microposts
+  end
 
   # Generates a new remember token
   def self.new_remember_token

@@ -9,4 +9,9 @@ FactoryGirl.define do
       admin true
     end
   end
+
+  factory :micropost do
+    content 'Lorum ipsum'
+    user # Creates a new user and associates it with this micropost
+  end
 end

@@ -1,0 +1,6 @@
+= form_tag root_path, method: :post do
+  = render 'shared/error_messages', object: @micropost 
+  .field
+    = hidden_field_tag 'micropost[user_id]', @micropost.user_id
+    = text_area_tag 'micropost[content]', nil, placeholder: 'Compose new micropost...'
+  = submit_tag 'Post', class: 'btn btn-large btn-primary'

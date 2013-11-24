@@ -1,9 +1,9 @@
 Rails4tutorialSampleApp::Application.routes.draw do
   resources :users
-
   # Note the hash argument { :only => [:new, :create, :destroy] } to prevent creating
-  # unnecessary RESTful actions
-  resources :sessions, only: [:new, :create, :destroy]
+  # unneeded RESTful actions
+  resources :sessions,   only: [:new, :create, :destroy]
+  resources :microposts, only: [:create, :destroy]
   
   # Route to static home page
   root 'static_pages#home'
@@ -27,6 +27,7 @@ Rails4tutorialSampleApp::Application.routes.draw do
   # Some aliases for signing in/out i.e. creating/destroying sessions
   match '/signin',   to: 'sessions#new',          via: 'get'
   match '/signout',  to: 'sessions#destroy',      via: 'delete'
+  match '/',         to: 'microposts#create',     via: 'post'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

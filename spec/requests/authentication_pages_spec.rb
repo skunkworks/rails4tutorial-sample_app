@@ -61,16 +61,17 @@ describe "Authentication" do
       let(:user) { FactoryGirl.create(:user) }
 
       describe "in the Users controller" do
+        
         describe "visiting the edit page" do
           before { visit edit_user_path(user) }
           it { should have_title('Sign in') }
         end
-
+        
         describe "submitting to the update action" do
           before { patch user_path(user) }
           specify { expect(response).to redirect_to(signin_path) }
         end
-
+        
         # Note: this is fucking killing me how this tutorial mixes up different
         # kinds of tests (model, controller, integration/request) together in a
         # haphazard, confusing way. Checking the response should occur as a
@@ -84,10 +85,24 @@ describe "Authentication" do
           before { get users_path }
           specify { expect(response).to redirect_to(signin_path) }
         end
-
+        
         describe "submitting a DELETE request to UsersController#destroy" do
           before { delete user_path(user) }
           specify { expect(response).to redirect_to(signin_path) }
+        end
+      end
+
+      describe 'in the Microposts controller' do        
+        let(:micropost) { FactoryGirl.create(:micropost, user: user) }
+
+        describe 'submitting to the create action' do
+          before { post microposts_path, micropost: micropost }
+          specify { expect(response).to redirect_to signin_path }
+        end
+        
+        describe 'submitting to the destroy action' do
+          before { delete micropost_path(micropost) }
+          specify { expect(response).to redirect_to signin_path }
         end
       end
 
