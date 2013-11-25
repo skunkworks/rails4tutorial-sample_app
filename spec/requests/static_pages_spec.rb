@@ -21,7 +21,6 @@ describe "Static pages" do
       let (:user) { FactoryGirl.create(:user) }
       before do
         FactoryGirl.create(:micropost, user: user, content: 'Lorem ipsum')
-        FactoryGirl.create(:micropost, user: user, content: 'Dolor sit amet')
         sign_in user
         visit root_path
       end
@@ -29,6 +28,40 @@ describe "Static pages" do
       it "renders a user's feed" do
         user.feed.each do |feed_item|
           expect(page).to have_selector("li##{feed_item.id}", text: feed_item.content)
+        end
+      end
+
+      describe 'sidebar' do
+        context "when the user has one micropost" do
+          it 'has the correct count and pluralization' do
+            expect(page).to have_selector('aside section', text: '1 micropost')
+          end
+        end
+        
+        context 'when the user has multiple microposts' do
+          before do
+            FactoryGirl.create(:micropost, user: user, content: 'Dolor sit amet')
+            visit root_path
+          end
+
+          it 'has the correct count and pluralization' do
+            expect(page).to have_selector('aside section', text: '2 microposts')
+          end
+        end
+      end
+
+      describe 'micropost pagination' do
+        before do
+          30.times { FactoryGirl.create(:micropost, user: user) }
+          visit root_path
+        end
+
+        it { should have_selector('div.pagination') }
+        
+        it 'lists each micropost' do
+          Micropost.paginate(page: 1).each do |micropost|
+            expect(page).to have_selector('li', text: micropost.content)
+          end
         end
       end
     end

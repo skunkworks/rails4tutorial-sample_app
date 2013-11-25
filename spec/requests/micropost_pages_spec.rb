@@ -39,6 +39,16 @@ describe 'Micropost' do
         expect{ click_link 'delete' }.to change(Micropost, :count).by(-1)
       end
     end
+
+    context 'as wrong user' do
+      before do
+        other_user = FactoryGirl.create(:user, email: 'other@test.com')
+        FactoryGirl.create(:micropost, user: other_user)
+        visit user_path(other_user)
+      end
+
+      it { should_not have_link('delete') }
+    end
   end
 
 end

@@ -9,7 +9,13 @@ describe "Authentication" do
     it { should have_title   'Sign in'}
     # A better test -- specify that we want an h1 element with 'Sign in'
     it { should have_selector 'h1', text: 'Sign in' }
+  end
 
+  context 'when not signed in' do
+    it { should_not have_link 'Sign out' }
+    it { should_not have_link 'Users' }
+    it { should_not have_link 'Settings' }
+    it { should_not have_link 'Profile' }
   end
 
   describe 'sign-in' do
@@ -67,7 +73,7 @@ describe "Authentication" do
           it { should have_title('Sign in') }
         end
         
-        describe "submitting to the update action" do
+        describe "submitting a PATCH request to UsersController#update action" do
           before { patch user_path(user) }
           specify { expect(response).to redirect_to(signin_path) }
         end
@@ -81,7 +87,7 @@ describe "Authentication" do
         # figure out why doing visit users_path would cause response to be nil.
         # It's because you can't check the HTTP response by doing visit. You have
         # to perform the HTTP verb instead.
-        describe "visiting the user index" do
+        describe "submitting a GET request to UsersController#index" do
           before { get users_path }
           specify { expect(response).to redirect_to(signin_path) }
         end
@@ -110,7 +116,6 @@ describe "Authentication" do
         let (:non_admin) { FactoryGirl.create(:user) }
         before do
           sign_in non_admin, no_capybara: true
-          visit users_path
         end
 
         describe "submitting a DELETE request to UsersController#destroy" do
@@ -124,36 +129,55 @@ describe "Authentication" do
 
         context 'after signing in' do
           before do
-            fill_in 'Email', with: user.email
-            fill_in 'Password', with: user.password
-            click_button 'Sign in'
+            sign_in user
           end
 
           it 'forwards you to the correct location' do
             expect(page).to have_title 'Edit user'
           end
+
+          context 'when signing in again' do
+            before do
+              delete signout_path
+              sign_in user
+            end
+
+            it 'renders the default profile page' do
+              expect(page).to have_title user.name
+            end
+          end
         end
       end
     end
 
-    describe 'as wrong user' do
+    context 'as wrong user' do
       let (:user) { FactoryGirl.create(:user) }
       # Need to remember that you can alter the factory object attributes this way!
       let (:wrong_user) { FactoryGirl.create(:user, email: "wronguser@test.com") }
       before { sign_in user, no_capybara: true }
 
-      describe "submitting a GET request to the Users#edit action" do
+      describe "submitting a GET request to the UsersController#edit action" do
         before { get edit_user_path(wrong_user) }
         specify { expect(response.body).not_to match(full_title('Edit user')) }
         specify { expect(response).to redirect_to(root_path) }
       end
 
-      describe "submitting a PATCH request to the Users#update action" do
+      describe "submitting a PATCH request to the UsersController#update action" do
         before { patch user_path(wrong_user) }
         specify { expect(response).to redirect_to(root_path) } 
       end
     end
 
+    context 'as admin user' do
+      let (:admin_user) { FactoryGirl.create(:admin) }
+      before { sign_in admin_user, no_capybara: true }
+
+      describe 'sending a DELETE request to UsersController#destroy' do
+        it 'does not allow you to delete yourself' do
+          expect{ delete user_path(admin_user) }.not_to change(User, :count)
+        end
+      end
+    end
   end
 
 end
