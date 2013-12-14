@@ -96,6 +96,16 @@ describe "Authentication" do
           before { delete user_path(user) }
           specify { expect(response).to redirect_to(signin_path) }
         end
+
+        describe 'submitting a GET request to UsersController#following' do
+          before { get following_user_path(user) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe 'submitting a GET request to UsersController#followers' do
+          before { get followers_user_path(user) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
       end
 
       describe 'in the Microposts controller' do        

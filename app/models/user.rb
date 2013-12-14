@@ -1,5 +1,23 @@
 class User < ActiveRecord::Base
   has_many :microposts, dependent: :destroy
+  # We have to specify the foreign key explicitly, since AR convention by default would look
+  # for a foreign key named user_id.
+  has_many :relationships, foreign_key: 'follower_id', dependent: :destroy
+  has_many :reverse_relationships, foreign_key: 'followed_id',
+                                   class_name:  'Relationship',
+                                   dependent:   :destroy
+  # We want User objects to respond to a followed_users method that returns a collection of
+  # followed users. We can do this by establishing a has_many association through
+  # relationships.
+  # 
+  # A relationship object responds to the #followed method and returns an AR User object.
+  # We can specify that a user has many followed users by going *through* the relationship
+  # model. Convention dictates that the relationships table should have a foreign key that
+  # matches the name of this method (i.e. followed_user_id)
+  has_many :followed_users, through: :relationships, source: :followed
+  # Don't have to specify source because "followers" matches the convention of the foreign
+  # key convention by looking for follower_id.
+  has_many :followers,      through: :reverse_relationships
 
   before_save   { email.downcase! }
   # Before the user gets created in the DB, generate a remember token for them so that
@@ -16,7 +34,20 @@ class User < ActiveRecord::Base
   validates :password, length: { minimum: 6 }
 
   def feed
+    # TODO: We'll change this to be better!
     microposts
+  end
+
+  def follow!(user)
+    self.relationships.create!(followed_id: user.id)
+  end
+
+  def unfollow!(user)
+    self.relationships.find_by(followed_id: user.id).destroy!
+  end
+
+  def following?(user)
+    self.relationships.find_by(followed_id: user.id)
   end
 
   # Generates a new remember token

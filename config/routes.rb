@@ -1,9 +1,14 @@
 Rails4tutorialSampleApp::Application.routes.draw do
-  resources :users
+  resources :users do
+    member do
+      get :following, :followers
+    end
+  end
   # Note the hash argument { :only => [:new, :create, :destroy] } to prevent creating
   # unneeded RESTful actions
-  resources :sessions,   only: [:new, :create, :destroy]
-  resources :microposts, only: [:create, :destroy]
+  resources :sessions,      only: [:new, :create, :destroy]
+  resources :microposts,    only: [:create, :destroy]
+  resources :relationships, only: [:create, :destroy]
   
   # Route to static home page
   root 'static_pages#home'
