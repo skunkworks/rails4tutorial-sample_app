@@ -48,6 +48,18 @@ describe "Static pages" do
             expect(page).to have_selector('aside section', text: '2 microposts')
           end
         end
+
+        describe 'follower/following stats' do
+          let (:follower) { FactoryGirl.create(:user) }
+          before do
+            follower.follow!(user)
+            visit root_path
+          end
+
+          # set up relationship stuff
+          it { should have_link("0 following", href: following_user_path(user)) }
+          it { should have_link("1 followers", href: followers_user_path(user)) }
+        end
       end
 
       describe 'micropost pagination' do

@@ -1,0 +1,8 @@
+- @user ||= current_user
+.stats
+  %a{href: following_user_path(@user)}
+    %strong#following{class: 'stat'} #{@user.followed_users.count}
+    following
+  %a{href: followers_user_path(@user)}
+    %strong#followed{class: 'stat'} #{@user.followers.count}
+    followers

@@ -8,6 +8,7 @@
         = "#{@user.name}"
 
   .span8
+    = render 'follow_form' if signed_in? && !current_user?(@user)
     - if @user.microposts.any?
       %h3 Microposts (#{@user.microposts.count})
       %ol.microposts
